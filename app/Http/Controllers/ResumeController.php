@@ -140,7 +140,9 @@ class ResumeController extends Controller
                 Storage::disk('public')->delete($resume->photo_path);
             }
 
-            $validated['photo_path'] = $request->file('photo')->store('photos', 'public');
+            if ($request->hasFile('photo')) {
+                $validated['photo_path'] = $request->file('photo')->store('images/Avatars', 'public');
+            }
         }
 
         // Удаляем фото из валидированных данных, так как мы храним путь
