@@ -52,7 +52,7 @@ class ResumeController extends Controller
             'about' => 'nullable',
             'position' => 'nullable|max:255',
             'address' => 'required|max:255',
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:5120',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -131,7 +131,7 @@ class ResumeController extends Controller
             'about' => 'nullable',
             'position' => 'nullable|max:255',
             'address' => 'required|max:255',
-            'photo' => 'nullable|image|max:1024',
+            'photo' => 'nullable|image|max:5120',
         ]);
 
         if ($request->hasFile('photo')) {
