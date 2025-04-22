@@ -6,6 +6,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\SkillController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,15 @@ Route::get('/resume/create', function () {
     return view('resume.create');
 })->middleware(['auth', 'verified'])->name('resume.create');
 
+Route::get('/fix-storage-link', function () {
+    if (file_exists(public_path('storage'))) {
+        unlink(public_path('storage'));
+    }
+
+    Artisan::call('storage:link');
+
+    return 'Storage link reset.';
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
