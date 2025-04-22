@@ -56,12 +56,17 @@ class ResumeController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $validated['photo_path'] = $request->file('photo')->store('images/Avatars', 'public');
+
+            $file = $request->file('photo');
+
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs('images/Avatars', $fileName, 'public');
+
+            $validated['photo_path'] = $path;
         }
 
-        // Удаляем фото из валидированных данных, так как мы храним путь
         unset($validated['photo']);
-
 
         $resume = new Resume($validated);
 
@@ -81,7 +86,6 @@ class ResumeController extends Controller
     {
         $resume = Resume::with(['educations', 'experiences', 'skills'])->findOrFail($id);
 
-        // Проверяем, принадлежит ли резюме текущему пользователю
         if ($resume->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -99,7 +103,6 @@ class ResumeController extends Controller
     {
         $resume = Resume::findOrFail($id);
 
-        // Проверяем, принадлежит ли резюме текущему пользователю
         if ($resume->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -134,19 +137,22 @@ class ResumeController extends Controller
             'photo' => 'nullable|image|max:5120',
         ]);
 
+
+        unset($validated['photo']);
+
         if ($request->hasFile('photo')) {
-            // Удаляем старое фото, если оно было
             if ($resume->photo_path) {
                 Storage::disk('public')->delete($resume->photo_path);
             }
 
-            if ($request->hasFile('photo')) {
-                $validated['photo_path'] = $request->file('photo')->store('images/Avatars', 'public');
-            }
-        }
+            $file = $request->file('photo');
 
-        // Удаляем фото из валидированных данных, так как мы храним путь
-        unset($validated['photo']);
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs('images/Avatars', $fileName, 'public');
+
+            $validated['photo_path'] = $path;
+        }
 
         $resume->update($validated);
 
